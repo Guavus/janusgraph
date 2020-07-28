@@ -9,8 +9,10 @@ pipeline {
     buildType = BRANCH_NAME.split("/").first();
     branchVersion = BRANCH_NAME.split("/").last().toUpperCase();
 
-    ARTIFACT_SRC_JANUSGRAPH_ZIP = './opendistro-security/target/releases'
+    ARTIFACT_SRC_JANUSGRAPH_ZIP = './janusgraph-dist/janusgraph-dist-hadoop-2/target'
     ARTIFACT_DEST_JANUSGRAPH_ZIP = 'ggn-archive/raf/janusgraph'
+
+    ARCHIVE_ZIP_PATH_JANUSGRAPH = "./janusgraph-dist/janusgraph-dist-hadoop-2/target/*.zip"
 
     SLACK_CHANNEL = 'jenkins-cdap-alerts'
     CHECKSTYLE_FILE = 'target/javastyle-result.xml'
@@ -65,6 +67,9 @@ pipeline {
             //Global Lib for Reports publishing
             reports_alerts(env.CHECKSTYLE_FILE, env.UNIT_RESULT, env.COBERTURA_REPORT, env.ALLURE_REPORT, env.HTML_REPORT)
  
+            //Global Lib for post build actions eg: artifacts archive
+            postBuild(env.ARCHIVE_ZIP_PATH_JANUSGRAPH)
+
             //Global Lib for slack alerts
             //slackalert(env.SLACK_CHANNEL)
       }
