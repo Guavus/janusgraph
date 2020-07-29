@@ -43,7 +43,7 @@ pipeline {
                         script {
                             echo "Running Build"
 
-                            sh "mvn clean install -Pjanusgraph-release -Dgpg.skip=true -DskipTests=true"
+                            sh "mvn clean install -U -Pjanusgraph-release -Dgpg.skip=true -DskipTests=true -Drat.skip=true"
                         }
                     }
                 }
