@@ -52,16 +52,19 @@ public class UserGroupInformationWrapper {
     private Subject getSubjectFromKeyTabAndPrincipalUGI(String principal, String keytabFilePath){
         try {
             if (this.ugi == null) {
-                UserGroupInformation.setConfiguration(new Configuration());
-                UserGroupInformation ugi = UserGroupInformation.loginUserFromKeytabAndReturnUGI(principal, keytabFilePath);
-                UserGroupInformation.setLoginUser(ugi);
-                this.ugi = ugi;
+                initialiseUGI(principal, keytabFilePath);
             }
             return getSubjectFromUGI(ugi);
         } catch (IOException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             logger.warn("error occurred while logging using UGI " , e);
             return null;
         }
+    }
+    private void initialiseUGI(String principal, String keytabFilePath) throws IOException {
+        UserGroupInformation.setConfiguration(new Configuration());
+        UserGroupInformation ugiObj = UserGroupInformation.loginUserFromKeytabAndReturnUGI(principal, keytabFilePath);
+        UserGroupInformation.setLoginUser(ugiObj);
+        ugi = ugiObj;
     }
 
     private Subject getSubjectFromStorageUGI() {
