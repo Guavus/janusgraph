@@ -6,6 +6,7 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.util.Args;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 /**
  * author shekhar.bansal
  **/

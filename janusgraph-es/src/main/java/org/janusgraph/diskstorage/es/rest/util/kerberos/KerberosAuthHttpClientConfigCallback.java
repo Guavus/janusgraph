@@ -58,8 +58,8 @@ public class KerberosAuthHttpClientConfigCallback  implements RestClientBuilder.
 
     @Override
     public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpAsyncClientBuilder) {
-        Subject subject = new UserGroupInformationWrapper().getSubject(principal, keytabFilePath);
         try {
+            Subject subject = new UserGroupInformationWrapper().getSubject(principal, keytabFilePath);
             GSSManager manager = GSSManager.getInstance();
             GSSName clientName = manager.createName(principal, GSSName.NT_USER_NAME);
             AccessControlContext accessControlContext = AccessController.getContext();
@@ -79,7 +79,7 @@ public class KerberosAuthHttpClientConfigCallback  implements RestClientBuilder.
             httpAsyncClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
             httpAsyncClientBuilder.setDefaultAuthSchemeRegistry(RegistryBuilder.<AuthSchemeProvider>create()
                 .register(AuthSchemes.SPNEGO, new SPNegoSchemeFactory()).build());
-        } catch (GSSException | PrivilegedActionException e) {
+        } catch (GSSException | PrivilegedActionException | KerbrosLoginException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }

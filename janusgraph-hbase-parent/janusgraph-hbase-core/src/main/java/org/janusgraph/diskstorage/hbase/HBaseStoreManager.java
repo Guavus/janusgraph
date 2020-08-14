@@ -376,8 +376,6 @@ public class HBaseStoreManager extends DistributedStoreManager implements KeyCol
                 UserGroupInformation.setLoginUser(ugi);
                 HBaseAdmin.available(hconf);
                 logger.info("Log in with: principal={}, keytab={}", config.get(KERBEROS_PRINCIPAL), config.get(KERBEROS_KEYTAB_PATH));
-
-                //new UserGroupInformationHbase1();
             } catch (Exception e) {
                 throw new PermanentBackendException(e);
             }
