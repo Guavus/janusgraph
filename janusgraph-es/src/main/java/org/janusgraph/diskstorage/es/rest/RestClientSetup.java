@@ -40,6 +40,7 @@ import org.janusgraph.diskstorage.es.rest.util.HttpAuthTypes;
 import org.janusgraph.diskstorage.es.rest.util.RestClientAuthenticator;
 import org.janusgraph.diskstorage.es.rest.util.SSLConfigurationCallback;
 import org.janusgraph.diskstorage.es.rest.util.SSLConfigurationCallback.Builder;
+import org.janusgraph.diskstorage.es.rest.util.kerberos.KerberosAuthHttpClientConfigCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -151,6 +152,11 @@ public class RestClientSetup {
                     config.has(ElasticSearchIndex.ES_HTTP_AUTH_REALM) ? config.get(ElasticSearchIndex.ES_HTTP_AUTH_REALM) : "",
                     config.get(ElasticSearchIndex.ES_HTTP_AUTH_USERNAME),
                     config.get(ElasticSearchIndex.ES_HTTP_AUTH_PASSWORD)));
+            break;
+            case KERBEROS:
+            callbackList.add(new KerberosAuthHttpClientConfigCallback(
+                config.get(ElasticSearchIndex.ES_HTTP_AUTH_PRINCIPAL),
+                config.get(ElasticSearchIndex.ES_HTTP_AUTH_KEYTAB_PATH)));
             break;
         case CUSTOM:
             callbackList.add(getCustomAuthenticator(

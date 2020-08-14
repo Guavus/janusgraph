@@ -229,6 +229,9 @@ public class ElasticSearchIndex implements IndexProvider {
     public static final ConfigNamespace ES_HTTP_AUTH_BASIC_NS =
             new ConfigNamespace(ES_HTTP_AUTH_NS, "basic", "Configuration options for HTTP(S) Basic authentication.");
 
+    public static final ConfigNamespace ES_HTTP_AUTH_KERBEROS_NS =
+        new ConfigNamespace(ES_HTTP_AUTH_NS, "kerberos", "Configuration options for kerberos authentication.");
+
     public static final ConfigOption<String> ES_HTTP_AUTH_USERNAME =
             new ConfigOption<>(ES_HTTP_AUTH_BASIC_NS, "username",
             "Username for HTTP(S) authentication.", ConfigOption.Type.LOCAL, "");
@@ -236,6 +239,14 @@ public class ElasticSearchIndex implements IndexProvider {
     public static final ConfigOption<String> ES_HTTP_AUTH_PASSWORD =
             new ConfigOption<>(ES_HTTP_AUTH_BASIC_NS, "password",
             "Password for HTTP(S) authentication.", ConfigOption.Type.LOCAL, "");
+
+    public static final ConfigOption<String> ES_HTTP_AUTH_KEYTAB_PATH =
+        new ConfigOption<>(ES_HTTP_AUTH_KERBEROS_NS, "keytab",
+            "Keytab for kerberos authentication.", ConfigOption.Type.LOCAL, "");
+
+    public static final ConfigOption<String> ES_HTTP_AUTH_PRINCIPAL =
+        new ConfigOption<>(ES_HTTP_AUTH_KERBEROS_NS, "principal",
+            "Principal for kerberos authentication.", ConfigOption.Type.LOCAL, "");
 
     public static final ConfigOption<String> ES_HTTP_AUTH_REALM = new ConfigOption<>(ES_HTTP_AUTH_BASIC_NS,
             "realm", "Realm value for HTTP(S) authentication. If empty, any realm is accepted.",
