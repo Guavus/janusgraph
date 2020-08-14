@@ -32,60 +32,44 @@ public class UserGroupInformationWrapper {
      */
     public Subject getSubject(String principal, String keytabFilePath) throws KerbrosLoginException {
         logger.info("inside get subject, principal:: {} , keytabFilePath:: {}", principal, keytabFilePath);
+        initialiseUGI(principal, keytabFilePath);
 
-        logger.debug("attempting to get subject from storage's UGI");
-        Subject subject = getSubjectFromStorageUGI();
-        if(subject != null) {
-            logger.info("using subject from storage's UGI");
-            return subject;
-        }
-
-        logger.debug("attempting to get subject from ES's UGI");
-        subject = getSubjectFromKeyTabAndPrincipalUGI(principal, keytabFilePath);
-        if(subject != null) {
-            logger.info("using ES's UGI's subject");
-            return subject;
-        }
-        throw new KerbrosLoginException("Error kerberos login");
+        return getSubjectFromUGI();
     }
 
-    private Subject getSubjectFromKeyTabAndPrincipalUGI(String principal, String keytabFilePath){
+    private void initialiseUGI(String principal, String keytabFilePath) throws KerbrosLoginException {
         try {
-            if (this.ugi == null) {
-                initialiseUGI(principal, keytabFilePath);
+            UserGroupInformation ugiObj = UserGroupInformation.getLoginUser();
+            if(ugiObj != null){
+                ugi = ugiObj;
+                logger.info("using storage's UGI");
+                return;
             }
-            return getSubjectFromUGI(ugi);
-        } catch (IOException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            logger.warn("error occurred while logging using UGI " , e);
-            return null;
-        }
-    }
-    private void initialiseUGI(String principal, String keytabFilePath) throws IOException {
-        UserGroupInformation.setConfiguration(new Configuration());
-        UserGroupInformation ugiObj = UserGroupInformation.loginUserFromKeytabAndReturnUGI(principal, keytabFilePath);
-        UserGroupInformation.setLoginUser(ugiObj);
-        ugi = ugiObj;
-    }
-
-    private Subject getSubjectFromStorageUGI() {
-        try {
-            return getSubjectFromUGI(UserGroupInformation.getLoginUser());
-        } catch (IOException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+        } catch (IOException e) {
             logger.warn("error occurred while getting login user from UGI " , e);
-            return null;
+        }
+
+        try {
+            UserGroupInformation.setConfiguration(new Configuration());
+            UserGroupInformation ugiObj = UserGroupInformation.loginUserFromKeytabAndReturnUGI(principal, keytabFilePath);
+            UserGroupInformation.setLoginUser(ugiObj);
+            ugi = ugiObj;
+            logger.info("using ES's UGI");
+        } catch (IOException e) {
+            logger.warn("error occurred while creating UGI " , e);
+            throw new KerbrosLoginException("Error creating UGI", e);
         }
     }
 
-    private Subject getSubjectFromUGI(UserGroupInformation ugi) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        if (ugi==null) {
-            logger.warn("ugi is null");
-            return null;
-        }
+    private Subject getSubjectFromUGI() throws KerbrosLoginException {
         logger.debug("ugi user:: " + ugi.getUserName());
-        Method method = ugi.getClass().getDeclaredMethod("getSubject", null);
-        method.setAccessible(true);
-        Subject subject = (Subject) method.invoke(ugi, null);
-        return subject;
-
+        try {
+            Method method  = ugi.getClass().getDeclaredMethod("getSubject", null);
+            method.setAccessible(true);
+            Subject subject = (Subject) method.invoke(ugi, null);
+            return subject;
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            throw new KerbrosLoginException("Error kerberos login", e);
+        }
     }
 }
