@@ -35,6 +35,19 @@ pipeline {
             }
         }
 
+        stage("Initialize variable") {
+            steps {
+                script {
+                    PUSH_JAR = false;
+                    
+                    if( env.buildType ==~ /(release)/)
+                    {
+                        PUSH_JAR = true;
+                    }
+                }
+            }
+        }
+
         stage ("Compile, Build and Deploy Janusgraph")
         {
             stages {
@@ -44,6 +57,19 @@ pipeline {
                             echo "Running Build"
 
                             sh "mvn clean install -U -Pjanusgraph-release -Dgpg.skip=true -DskipTests=true -Drat.skip=true"
+                        }
+                    }
+                }
+
+                stage("Push JAR to Maven Artifactory") {
+                    when {
+                        expression { PUSH_JAR == true }
+                    }
+                    steps {
+                        script {
+                            echo "Pushing JAR to Maven Artifactory"
+
+                            sh "mvn deploy -U -DskipTests=true -Dcheckstyle.skip=true -Drat.skip=true -Drat.ignoreErrors=true -Dfindbugs.skip=true;"
                         }
                     }
                 }
