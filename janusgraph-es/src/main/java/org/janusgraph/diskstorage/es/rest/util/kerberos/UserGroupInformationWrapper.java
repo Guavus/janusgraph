@@ -31,7 +31,7 @@ public class UserGroupInformationWrapper {
      * @throws KerbrosLoginException
      */
     public Subject getSubject(String principal, String keytabFilePath) throws KerbrosLoginException {
-        logger.info("inside get subject, principal:: {} , keytabFilePath:: {}", principal, keytabFilePath);
+        logger.debug("inside get subject, principal:: {} , keytabFilePath:: {}", principal, keytabFilePath);
         initialiseUGI(principal, keytabFilePath);
 
         return getSubjectFromUGI();
@@ -42,7 +42,7 @@ public class UserGroupInformationWrapper {
             UserGroupInformation ugiObj = UserGroupInformation.getLoginUser();
             if(ugiObj != null){
                 ugi = ugiObj;
-                logger.info("using storage's UGI");
+                logger.debug("using storage's UGI, user::{}", ugiObj.getUserName());
                 return;
             }
         } catch (IOException e) {
@@ -54,9 +54,9 @@ public class UserGroupInformationWrapper {
             UserGroupInformation ugiObj = UserGroupInformation.loginUserFromKeytabAndReturnUGI(principal, keytabFilePath);
             UserGroupInformation.setLoginUser(ugiObj);
             ugi = ugiObj;
-            logger.info("using ES's UGI");
+            logger.debug("using ES's UGI, user::{}", ugi.getUserName());
         } catch (IOException e) {
-            logger.warn("error occurred while creating UGI " , e);
+            logger.error("error occurred while creating UGI " , e);
             throw new KerbrosLoginException("Error creating UGI", e);
         }
     }
