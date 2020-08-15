@@ -66,6 +66,11 @@
             <id>ossrh</id>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
+        <repository>
+            <id>central</id>
+            <name>lib-release</name>
+            <url>http://artifacts.ggn.in.guavus.com:80/libs-release</url>
+        </repository>
     </distributionManagement>
     <properties>
         <titan.compatible-versions>1.0.0,1.1.0-SNAPSHOT</titan.compatible-versions>
