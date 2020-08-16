@@ -28,6 +28,7 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import org.janusgraph.diskstorage.es.compat.ES6Compat;
+import org.janusgraph.diskstorage.es.compat.ES7Compat;
 import org.janusgraph.diskstorage.es.rest.util.HttpAuthTypes;
 import org.locationtech.spatial4j.shape.Rectangle;
 import org.apache.tinkerpop.shaded.jackson.databind.ObjectMapper;
@@ -316,6 +317,10 @@ public class ElasticSearchIndex implements IndexProvider {
             case SIX:
                 compat = new ES6Compat();
                 break;
+            case SEVEN:
+                log.info("code in sevenn version : {}",client.getMajorVersion());
+                compat = new ES7Compat();
+                break;
             default:
                 throw new PermanentBackendException("Unsupported Elasticsearch version: " + client.getMajorVersion());
         }
@@ -340,7 +345,10 @@ public class ElasticSearchIndex implements IndexProvider {
         indexSetting = new HashMap<>();
 
         ElasticSearchSetup.applySettingsFromJanusGraphConf(indexSetting, config);
-        indexSetting.put("index.max_result_window", Integer.MAX_VALUE);
+
+        if(!compat.getIndexFeatures().supportsIndexType()){
+            indexSetting.put("index.max_result_window", Integer.MAX_VALUE);
+        }
     }
 
     /**
@@ -546,7 +554,11 @@ public class ElasticSearchIndex implements IndexProvider {
         final Map<String,Object> mapping = ImmutableMap.of("properties", properties);
 
         try {
-            client.createMapping(getIndexStoreName(store), store, mapping);
+            if(compat.getIndexFeatures().supportsIndexType()) {
+                client.createMapping(getIndexStoreName(store), store +"?include_type_name=true", mapping);
+            }else{
+                client.createMapping(getIndexStoreName(store), store  , mapping);
+            }
         } catch (final Exception e) {
             throw convert(e);
         }
