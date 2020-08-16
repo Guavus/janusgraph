@@ -21,6 +21,8 @@ import org.janusgraph.diskstorage.util.BackendOperation;
 import org.janusgraph.graphdb.database.idhandling.VariableLong;
 import org.janusgraph.graphdb.database.serialize.DataOutput;
 import org.janusgraph.graphdb.util.StreamIterable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -41,7 +43,8 @@ public class IndexTransaction implements BaseTransaction, LoggableTransaction {
 
     private static final int DEFAULT_OUTER_MAP_SIZE = 3;
     private static final int DEFAULT_INNER_MAP_SIZE = 5;
-
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(IndexTransaction.class);
     private final IndexProvider index;
     private final BaseTransaction indexTx;
     private final KeyInformation.IndexRetriever keyInformation;
@@ -93,6 +96,7 @@ public class IndexTransaction implements BaseTransaction, LoggableTransaction {
 
 
     public void register(String store, String key, KeyInformation information) throws BackendException {
+        LOGGER.info("registering index :{}",store);
         index.register(store,key,information,indexTx);
     }
 
