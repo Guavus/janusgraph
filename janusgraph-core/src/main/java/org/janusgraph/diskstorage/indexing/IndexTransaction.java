@@ -96,7 +96,7 @@ public class IndexTransaction implements BaseTransaction, LoggableTransaction {
 
 
     public void register(String store, String key, KeyInformation information) throws BackendException {
-        LOGGER.info("registering index :{}",store);
+        LOGGER.debug("registering index :{}",store);
         index.register(store,key,information,indexTx);
     }
 

@@ -110,7 +110,7 @@ public class ElasticSearchIndex implements IndexProvider {
 
     public static final ConfigOption<String> INTERFACE =
             new ConfigOption<>(ELASTICSEARCH_NS, "interface",
-            "Interface for connecting to Elasticsearchx. " +
+            "Interface for connecting to Elasticsearch. " +
             "TRANSPORT_CLIENT and NODE were previously supported, but now are required to migrate to REST_CLIENT. " +
             "See the JanusGraph upgrade instructions for more details.",
             ConfigOption.Type.MASKABLE, String.class, ElasticSearchSetup.REST_CLIENT.toString(),
