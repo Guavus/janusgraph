@@ -21,6 +21,8 @@ public enum HttpAuthTypes {
     BASIC,
     /** Kerberos authentication */
     KERBEROS,
+
+    SPNEGO,
     /** Custom authentication with a provided authenticator implementation. Please refer to the documentation for
      * the custom authenticator.
      */
