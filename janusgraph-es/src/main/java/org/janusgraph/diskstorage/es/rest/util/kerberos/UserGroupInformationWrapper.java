@@ -36,26 +36,6 @@ public class UserGroupInformationWrapper {
         logger.debug("inside get subject, principal:: {} , keytabFilePath:: {}", principal, keytabFilePath);
         initialiseUGI(principal, keytabFilePath);
 
-//        Subject s1 =  getSubjectFromUGI();
-//        logger.info("subject:: {}", s1);
-//        logger.info("subject:: {}", s1.getPrincipals());
-//        logger.info("subject:: {}", s1.getPublicCredentials());
-//        logger.info("subject:: {}", s1.getPrivateCredentials());
-//
-//
-//        logger.info("ugi:: {}", ugi.hasKerberosCredentials());
-//        logger.info("ugi:: {}", ugi.getUserName());
-//        logger.info("ugi:: {}", ugi.getTokens());
-//        logger.info("ugi:: {}", ugi.getAuthenticationMethod());
-//        logger.info("ugi:: {}", ugi.getCredentials());
-//        logger.info("ugi:: {}", ugi.getTokenIdentifiers());
-//
-////        for (Object o1: s1.getPublicCredentials()){
-////
-////        }
-//
-//        return s1;
-
         return getSubjectFromUGI();
     }
 

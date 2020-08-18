@@ -5,15 +5,12 @@ import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.message.BasicHeader;
 import org.elasticsearch.client.RestClientBuilder;
 import org.ietf.jgss.GSSException;
-import org.ietf.jgss.Oid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.kerb4j.client.SpnegoClient;
 
 import java.io.IOException;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,14 +21,6 @@ import java.util.List;
 public class SpengoAuthHttpClientConfigCallback implements RestClientBuilder.HttpClientConfigCallback {
 
     private static final Logger logger = LoggerFactory.getLogger(SpengoAuthHttpClientConfigCallback.class);
-//    private String keytabFilePath;
-//    private String principal;
-//
-//    public static final Oid SPNEGO;
-//    public static final Oid KRB5MECH;
-//    private final Oid[] desiredMechs;
-
-
     private static final String KRB5_DEBUG = "false";
     private static final String KRB5_CONF = "/etc/krb5.conf";
 
@@ -40,6 +29,7 @@ public class SpengoAuthHttpClientConfigCallback implements RestClientBuilder.Htt
     private String kerberosSPN;
 
     public SpengoAuthHttpClientConfigCallback(String principal, String keytabFilePath, String kerberosSPN){
+        logger.debug("inside SpengoAuthHttpClientConfigCallback constructor,  principal:: {}, keytabFilePath:: {}, kerberosSPN:: {} ", principal, keytabFilePath, kerberosSPN);
         this.principal = principal;
         this.keytabFilePath = keytabFilePath;
         this.kerberosSPN = kerberosSPN;
@@ -48,25 +38,15 @@ public class SpengoAuthHttpClientConfigCallback implements RestClientBuilder.Htt
     /**
      * Util function to get kerberos authentication token from principal and keytab path
      */
-    public String getKerberosAuthorizationHeader(){
+    private String getKerberosAuthorizationHeader(){
         String kerberosAuthorizationHeader = "";
         SpnegoClient spnegoClient = SpnegoClient.loginWithKeyTab(principal, getNewKeytabPathInsideContainer(keytabFilePath));
-        AccessController.doPrivileged(new PrivilegedAction() {
-            public Object run() {
-                System.setProperty("sun.security.krb5.debug", KRB5_DEBUG);
-                System.setProperty("java.security.krb5.conf", KRB5_CONF);
-                return null;
-            }
-        });
+        System.setProperty("sun.security.krb5.debug", KRB5_DEBUG);
+        System.setProperty("java.security.krb5.conf", KRB5_CONF);
 
         try {
             kerberosAuthorizationHeader = spnegoClient.createAuthroizationHeaderForSPN(kerberosSPN);
-
-        } catch (PrivilegedActionException e) {
-            e.printStackTrace();
-        } catch (GSSException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (IOException | PrivilegedActionException | GSSException e) {
             e.printStackTrace();
             logger.error(String.format("Could not login with the provided " +
                 "keytab=%s,principal=%s,ESprincipal=%s", keytabFilePath, principal, kerberosSPN));
@@ -87,7 +67,7 @@ public class SpengoAuthHttpClientConfigCallback implements RestClientBuilder.Htt
      * @param keytabPath
      * @return
      */
-    public String getNewKeytabPathInsideContainer(String keytabPath) {
+    private String getNewKeytabPathInsideContainer(String keytabPath) {
         String[] li =  keytabPath.split("/");
         return li[li.length-1];
     }
@@ -96,7 +76,6 @@ public class SpengoAuthHttpClientConfigCallback implements RestClientBuilder.Htt
     @Override
     public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
         String kerberosAuthorizationHeader = getKerberosAuthorizationHeader();
-        logger.info("kerberosAuthorizationHeader:: {}", kerberosAuthorizationHeader);
         List<Header> headers = new ArrayList<>();
         headers.add(new BasicHeader("Authorization", kerberosAuthorizationHeader));
         httpClientBuilder.setDefaultHeaders(headers);

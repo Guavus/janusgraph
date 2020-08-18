@@ -1,6 +1,5 @@
 package org.janusgraph.diskstorage.es.rest.util.kerberos;
 
-import org.apache.http.Header;
 import org.apache.http.auth.AuthSchemeProvider;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.KerberosCredentials;
@@ -9,7 +8,6 @@ import org.apache.http.config.Lookup;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.impl.auth.SPNegoSchemeFactory;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
-import org.apache.http.message.BasicHeader;
 import org.elasticsearch.client.RestClientBuilder;
 import org.ietf.jgss.Oid;
 import org.ietf.jgss.GSSCredential;
@@ -26,8 +24,6 @@ import java.security.AccessControlContext;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * author shekhar.bansal
@@ -64,32 +60,16 @@ public class KerberosAuthHttpClientConfigCallback  implements RestClientBuilder.
     @Override
     public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpAsyncClientBuilder) {
         try {
-
-            if(false){
-                new UserGroupInformationWrapper().getSubject(principal, keytabFilePath);
-            }
-
-            Lookup<AuthSchemeProvider> authSchemeProviderLookup = RegistryBuilder.<AuthSchemeProvider>create()
-                .register(AuthSchemes.SPNEGO, new SPNegoSchemeFactory()).build();
-
-            Subject subject = new UserGroupInformationWrapper().getSubjectFromKeyTabAndPrincipal(principal, keytabFilePath);
+            Subject subject = new UserGroupInformationWrapper().getSubject(principal, keytabFilePath);
             GSSManager manager = GSSManager.getInstance();
             GSSName clientName = manager.createName(principal, GSSName.NT_USER_NAME);
             AccessControlContext accessControlContext = AccessController.getContext();
-
-            Subject.doAsPrivileged(subject, new PrivilegedExceptionAction<GSSCredential>() {
-                @Override
-                public GSSCredential run() throws Exception {
-                    logger.info("dummy logger");
-                    return null;
-                }
-            }, accessControlContext);
 
             GSSCredential clientCreds = Subject.doAsPrivileged(subject, new PrivilegedExceptionAction<GSSCredential>() {
                 @Override
                 public GSSCredential run() throws Exception {
                     return manager.createCredential(clientName,
-                        8*3600, SPNEGO, GSSCredential.INITIATE_ONLY);
+                        8*3600, desiredMechs, GSSCredential.INITIATE_ONLY);
                 }
             }, accessControlContext);
 
@@ -99,7 +79,8 @@ public class KerberosAuthHttpClientConfigCallback  implements RestClientBuilder.
                 new KerberosCredentials(clientCreds));
 
             httpAsyncClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-            httpAsyncClientBuilder.setDefaultAuthSchemeRegistry(authSchemeProviderLookup);
+            httpAsyncClientBuilder.setDefaultAuthSchemeRegistry(RegistryBuilder.<AuthSchemeProvider>create()
+                .register(AuthSchemes.SPNEGO, new SPNegoSchemeFactory()).build());
 
         } catch (GSSException | PrivilegedActionException | KerbrosLoginException e) {
             e.printStackTrace();
