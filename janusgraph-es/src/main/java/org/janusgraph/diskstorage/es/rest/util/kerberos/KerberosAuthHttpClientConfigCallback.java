@@ -60,8 +60,10 @@ public class KerberosAuthHttpClientConfigCallback  implements RestClientBuilder.
     public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpAsyncClientBuilder) {
         try {
             Subject subject = new UserGroupInformationWrapper().getSubject(principal, keytabFilePath);
+            String subjectPrincipal = subject.getPrincipals().size() > 0 ?
+                subject.getPrincipals().iterator().next().getName() : principal;
             GSSManager manager = GSSManager.getInstance();
-            GSSName clientName = manager.createName(principal, GSSName.NT_USER_NAME);
+            GSSName clientName = manager.createName(subjectPrincipal, GSSName.NT_USER_NAME);
             AccessControlContext accessControlContext = AccessController.getContext();
             GSSCredential clientCreds = Subject.doAsPrivileged(subject, new PrivilegedExceptionAction<GSSCredential>() {
                 @Override
