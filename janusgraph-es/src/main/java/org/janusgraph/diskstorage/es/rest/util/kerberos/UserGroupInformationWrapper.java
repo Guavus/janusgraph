@@ -1,11 +1,13 @@
 package org.janusgraph.diskstorage.es.rest.util.kerberos;
 
+import com.kerb4j.common.jaas.sun.Krb5LoginContext;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.Subject;
+import javax.security.auth.login.LoginContext;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -40,11 +42,12 @@ public class UserGroupInformationWrapper {
     private void initialiseUGI(String principal, String keytabFilePath) throws KerbrosLoginException {
         try {
             UserGroupInformation ugiObj = UserGroupInformation.getLoginUser();
-            if(ugiObj != null){
+            if(ugiObj != null && ugiObj.hasKerberosCredentials()){
                 ugi = ugiObj;
                 logger.debug("using storage's UGI, user::{}", ugiObj.getUserName());
                 return;
             }
+            logger.debug("kerberos credentials not found in storage's UGI, attempting to create UGI from ES keytab principal");
         } catch (IOException e) {
             logger.warn("error occurred while getting login user from UGI " , e);
         }
@@ -72,4 +75,10 @@ public class UserGroupInformationWrapper {
             throw new KerbrosLoginException("Error kerberos login", e);
         }
     }
+
+    public Subject getSubjectFromKeyTabAndPrincipal(String principal, String keytabFilePath) {
+        LoginContext loginContext = Krb5LoginContext.loginWithKeyTab(principal, keytabFilePath);
+        return loginContext.getSubject();
+    }
+
 }

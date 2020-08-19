@@ -249,6 +249,10 @@ public class ElasticSearchIndex implements IndexProvider {
         new ConfigOption<>(ES_HTTP_AUTH_KERBEROS_NS, "principal",
             "Principal for kerberos authentication.", ConfigOption.Type.LOCAL, "");
 
+    public static final ConfigOption<String> ES_HTTP_AUTH_KERBEROS_SPN =
+        new ConfigOption<>(ES_HTTP_AUTH_KERBEROS_NS, "kerberosSPN",
+            "SPN for kerberos authentication.", ConfigOption.Type.LOCAL, "");
+
     public static final ConfigOption<String> ES_HTTP_AUTH_REALM = new ConfigOption<>(ES_HTTP_AUTH_BASIC_NS,
             "realm", "Realm value for HTTP(S) authentication. If empty, any realm is accepted.",
             ConfigOption.Type.LOCAL, "");

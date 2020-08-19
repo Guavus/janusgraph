@@ -4,6 +4,7 @@ import org.apache.http.auth.AuthSchemeProvider;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.KerberosCredentials;
 import org.apache.http.client.config.AuthSchemes;
+import org.apache.http.config.Lookup;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.impl.auth.SPNegoSchemeFactory;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
@@ -65,6 +66,7 @@ public class KerberosAuthHttpClientConfigCallback  implements RestClientBuilder.
             GSSManager manager = GSSManager.getInstance();
             GSSName clientName = manager.createName(subjectPrincipal, GSSName.NT_USER_NAME);
             AccessControlContext accessControlContext = AccessController.getContext();
+
             GSSCredential clientCreds = Subject.doAsPrivileged(subject, new PrivilegedExceptionAction<GSSCredential>() {
                 @Override
                 public GSSCredential run() throws Exception {
@@ -81,6 +83,7 @@ public class KerberosAuthHttpClientConfigCallback  implements RestClientBuilder.
             httpAsyncClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
             httpAsyncClientBuilder.setDefaultAuthSchemeRegistry(RegistryBuilder.<AuthSchemeProvider>create()
                 .register(AuthSchemes.SPNEGO, new SPNegoSchemeFactory()).build());
+
         } catch (GSSException | PrivilegedActionException | KerbrosLoginException e) {
             e.printStackTrace();
             throw new RuntimeException(e);

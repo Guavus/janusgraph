@@ -41,6 +41,7 @@ import org.janusgraph.diskstorage.es.rest.util.RestClientAuthenticator;
 import org.janusgraph.diskstorage.es.rest.util.SSLConfigurationCallback;
 import org.janusgraph.diskstorage.es.rest.util.SSLConfigurationCallback.Builder;
 import org.janusgraph.diskstorage.es.rest.util.kerberos.KerberosAuthHttpClientConfigCallback;
+import org.janusgraph.diskstorage.es.rest.util.spnego.SpengoAuthHttpClientConfigCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -158,6 +159,13 @@ public class RestClientSetup {
                 config.get(ElasticSearchIndex.ES_HTTP_AUTH_PRINCIPAL),
                 config.get(ElasticSearchIndex.ES_HTTP_AUTH_KEYTAB_PATH)));
             break;
+            case SPNEGO:
+                callbackList.add(new SpengoAuthHttpClientConfigCallback(
+                    config.get(ElasticSearchIndex.ES_HTTP_AUTH_PRINCIPAL),
+                    config.get(ElasticSearchIndex.ES_HTTP_AUTH_KEYTAB_PATH),
+                    config.get(ElasticSearchIndex.ES_HTTP_AUTH_KERBEROS_SPN)
+                    ));
+                break;
         case CUSTOM:
             callbackList.add(getCustomAuthenticator(
                     config.get(ElasticSearchIndex.ES_HTTP_AUTHENTICATOR_CLASS),
