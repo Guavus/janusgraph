@@ -1843,7 +1843,10 @@
         <profile>
             <id>all</id>
             <activation>
-                <activeByDefault>false</activeByDefault>
+                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>!skip.solr_examples</name>
+                </property>
             </activation>
             <modules>
                 <module>janusgraph-lucene</module>
