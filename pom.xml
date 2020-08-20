@@ -132,6 +132,7 @@
         <dependency.locations.enabled>false</dependency.locations.enabled>
         <cassandra-driver.version>3.7.1</cassandra-driver.version>
         <testcontainers.version>1.10.6</testcontainers.version>
+        <assembly.cfilter.in.dir.suffix></assembly.cfilter.in.dir.suffix>
     </properties>
     <modules>
         <module>janusgraph-codepipelines-ci</module>
