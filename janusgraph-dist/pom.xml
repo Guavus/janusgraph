@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.janusgraph</groupId>
         <artifactId>janusgraph</artifactId>
-        <version>0.4.0-auth.1</version>
+        <version>0.4.0-auth.2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <packaging>pom</packaging>
@@ -16,7 +16,6 @@
 
         <!-- Zipfile/Tarfile assembly source paths -->
         <assembly.txtfile.dir>${top.level.basedir}</assembly.txtfile.dir>
-        <assembly.cfilter.in.dir.suffix>${assembly.cfilter.in.dir.suffix}</assembly.cfilter.in.dir.suffix>
         <assembly.cfilter.in.dir>${project.basedir}/src/assembly/cfilter/${assembly.cfilter.in.dir.suffix}</assembly.cfilter.in.dir>
         <assembly.cfilter.out.dir>${project.build.directory}/cfilter</assembly.cfilter.out.dir>
         <assembly.descriptor.dir>${project.basedir}/src/assembly/descriptor</assembly.descriptor.dir>
