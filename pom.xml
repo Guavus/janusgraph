@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.janusgraph</groupId>
     <artifactId>janusgraph</artifactId>
-    <version>0.4.0-auth</version>
+    <version>0.4.0-auth.1</version>
     <packaging>pom</packaging>
     <prerequisites>
         <maven>2.2.1</maven>
@@ -74,7 +74,7 @@
     </distributionManagement>
     <properties>
         <titan.compatible-versions>1.0.0,1.1.0-SNAPSHOT</titan.compatible-versions>
-        <tinkerpop.version>3.4.1-auth</tinkerpop.version>
+        <tinkerpop.version>3.4.1-auth.1</tinkerpop.version>
         <junit-platform.version>1.4.0</junit-platform.version>
         <junit.version>5.4.0</junit.version>
         <mrunit.version>1.1.0</mrunit.version>
