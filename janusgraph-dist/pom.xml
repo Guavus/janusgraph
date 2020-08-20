@@ -16,7 +16,8 @@
 
         <!-- Zipfile/Tarfile assembly source paths -->
         <assembly.txtfile.dir>${top.level.basedir}</assembly.txtfile.dir>
-        <assembly.cfilter.in.dir>${project.basedir}/src/assembly/cfilter</assembly.cfilter.in.dir>
+        <assembly.cfilter.in.dir.suffix>${assembly.cfilter.in.dir.suffix}</assembly.cfilter.in.dir.suffix>
+        <assembly.cfilter.in.dir>${project.basedir}/src/assembly/cfilter/${assembly.cfilter.in.dir.suffix}</assembly.cfilter.in.dir>
         <assembly.cfilter.out.dir>${project.build.directory}/cfilter</assembly.cfilter.out.dir>
         <assembly.descriptor.dir>${project.basedir}/src/assembly/descriptor</assembly.descriptor.dir>
         <assembly.es.dir>${project.build.directory}/elasticsearch-${elasticsearch-server.version}</assembly.es.dir>
@@ -49,7 +50,12 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>janusgraph-all</artifactId>
+            <artifactId>janusgraph-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>janusgraph-cql</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -127,17 +133,6 @@
                 <exclusion>
                     <groupId>*</groupId>
                     <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>janusgraph-solr</artifactId>
-            <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>solr-core</artifactId>
-                    <groupId>org.apache.solr</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -958,5 +953,38 @@
                 </plugins>
             </build>
         </profile>
+
+        <profile>
+            <id>solr</id>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>${project.groupId}</groupId>
+                        <artifactId>janusgraph-solr</artifactId>
+                        <version>${project.version}</version>
+                        <exclusions>
+                            <exclusion>
+                                <artifactId>solr-core</artifactId>
+                                <groupId>org.apache.solr</groupId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+        </profile>
+
+        <profile>
+            <id>all</id>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>${project.groupId}</groupId>
+                        <artifactId>janusgraph-all</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+        </profile>
+
     </profiles>
 </project>
