@@ -56,7 +56,7 @@ pipeline {
                         script {
                             echo "Running Build"
 
-                            sh "mvn clean install -U -Pjanusgraph-release -Dgpg.skip=true -DskipTests=true -Drat.skip=true"
+                            sh "mvn clean install -U -Phadoop2 -Pjanusgraph-release -Dgpg.skip=true -DskipTests=true -Drat.skip=true -Dassembly.cfilter.in.dir.suffix=conf -Dskip.solr_examples=true"
                         }
                     }
                 }

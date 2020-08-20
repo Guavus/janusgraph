@@ -145,12 +145,7 @@
         <module>janusgraph-hbase-parent</module>
         <module>janusgraph-bigtable</module>
         <module>janusgraph-es</module>
-        <module>janusgraph-lucene</module>
-        <module>janusgraph-all</module>
         <module>janusgraph-dist</module>
-        <module>janusgraph-doc</module>
-        <module>janusgraph-solr</module>
-        <module>janusgraph-examples</module>
     </modules>
     <repositories>
         <repository>
@@ -1831,6 +1826,35 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+
+
+        <profile>
+            <id>solr</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <modules>
+                <module>janusgraph-lucene</module>
+                <module>janusgraph-solr</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>all</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>!skip.solr_examples</name>
+                </property>
+            </activation>
+            <modules>
+                <module>janusgraph-lucene</module>
+                <module>janusgraph-all</module>
+                <module>janusgraph-solr</module>
+                <module>janusgraph-examples</module>
+                <module>janusgraph-doc</module>
+            </modules>
         </profile>
 
     </profiles>
