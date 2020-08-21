@@ -42,7 +42,7 @@ pipeline {
                     
                     if( env.buildType ==~ /(release)/)
                     {
-                        PUSH_JAR = true;
+                        PUSH_JAR = false;
                     }
                 }
             }
