@@ -67,9 +67,9 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository> -->
         <repository>
-          <id>snapshots</id>
-          <name>libs-snapshot</name>
-          <url>http://artifacts.ggn.in.guavus.com/libs-snapshot</url>
+            <id>central</id>
+            <name>lib-release</name>
+            <url>http://artifacts.ggn.in.guavus.com:80/libs-release</url>
         </repository>
     </distributionManagement>
     <properties>
