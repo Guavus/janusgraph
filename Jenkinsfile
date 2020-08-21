@@ -69,7 +69,7 @@ pipeline {
                         script {
                             echo "Pushing JAR to Maven Artifactory"
 
-                            sh "mvn -U -DskipTests=true -Dcheckstyle.skip=true -Drat.skip=true -Drat.ignoreErrors=true -Dfindbugs.skip=true -Dgpg.skip=true -Phadoop2 -Pjanusgraph-release -Dassembly.cfilter.in.dir.suffix=conf -Dskip.solr_examples=true;"
+                            sh "mvn deploy -U -DskipTests=true -Dcheckstyle.skip=true -Drat.skip=true -Drat.ignoreErrors=true -Dfindbugs.skip=true -Dgpg.skip=true -Phadoop2 -Pjanusgraph-release -Dassembly.cfilter.in.dir.suffix=conf -Dskip.solr_examples=true;"
                         }
                     }
                 }
